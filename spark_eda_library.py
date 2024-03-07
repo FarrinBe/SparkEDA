@@ -36,7 +36,7 @@ class SparkEDA:
         Uses Spark to collect data and Matplotlib to plot a histogram of a specified column.
         """
         data = self.spark_df.select(column).rdd.flatMap(lambda x: x).collect()
-        sampled_data = self.spark_df.select(column).sample(fraction)
+        #sampled_data = self.spark_df.select(column).sample(fraction)
         
         plt.hist(data, bins)
         plt.title(f'Histogram of {column}')
