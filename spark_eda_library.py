@@ -2,6 +2,7 @@ from pyspark.sql import DataFrame, functions as F
 from pyspark.ml.stat import Correlation
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.classification import DecisionTreeClassifier
+import matplotlib.pyplot as plt
 
 class SparkEDA:
     def __init__(self, spark_df: DataFrame):
@@ -30,13 +31,14 @@ class SparkEDA:
             self.spark_df.select(column).distinct().show()
             self.spark_df.groupBy(column).count().orderBy('count', ascending=False).show()
 
-    def plot_histogram(self, column):
+    def plot_histogram(self, column, bins=20, fraction=0.1):
         """
         Uses Spark to collect data and Matplotlib to plot a histogram of a specified column.
         """
         data = self.spark_df.select(column).rdd.flatMap(lambda x: x).collect()
-        import matplotlib.pyplot as plt
-        plt.hist(data, bins=20)
+        sampled_data = self.spark_df.select(column).sample(fraction)
+        
+        plt.hist(data, bins)
         plt.title(f'Histogram of {column}')
         plt.show()
 
